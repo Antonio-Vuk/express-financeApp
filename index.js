@@ -24,7 +24,7 @@ const data = require("./routes/data");
 const customFieldListValue = require("./routes/customFieldListValue");
 
 app.get("/error", (req, res) => {
-    return res.send("Wrong route");
+    return res.send("Wrong route!");
 });
 
 app.use("/api/auth", auth);
