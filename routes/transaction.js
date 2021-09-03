@@ -10,6 +10,7 @@ const {
     insertCustomFieldValue,
     deleteCustomFieldValue,
 } = require("../model/customFieldValue");
+const { custom } = require("joi");
 const router = express.Router();
 
 router.post("/", auth, async (req, res) => {
@@ -29,6 +30,32 @@ router.post("/", auth, async (req, res) => {
             req.body.customFields
         );
 
+        return res.send({ transaction, customFieldValues });
+    } catch (error) {
+        return res.status(405).send(error.message);
+    }
+});
+
+router.post("/incoming", auth, async (req, res) => {
+    try {
+        const { error } = validateTransaction(req.body.transaction);
+
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+
+        const transaction = await insertTransaction(
+            req.body.transaction,
+            req.user.id
+        );
+        let customFieldsValues = req.body.customFieldsValues;
+        customFieldsValues.forEach((custom) => {
+            custom.transactionId = transaction.id;
+        });
+        const customFieldValues = await insertCustomFieldIncomingValues(
+            customFieldsValues
+        );
+        console.log("All is fine");
         return res.send({ transaction, customFieldValues });
     } catch (error) {
         return res.status(405).send(error.message);
@@ -74,6 +101,17 @@ const insertCustomFieldValues = async (transactionId, customFields) => {
             custom.id,
             custom.value,
             transactionId
+        );
+    });
+    return await Promise.all(promises);
+};
+
+const insertCustomFieldIncomingValues = async (customs) => {
+    const promises = customs.map(async (custom) => {
+        return await insertCustomFieldValue(
+            custom.customFieldId,
+            custom.value,
+            custom.transactionId
         );
     });
     return await Promise.all(promises);

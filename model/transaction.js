@@ -2,11 +2,9 @@ const sqlPool = require("../database");
 const { generateId } = require("../utils/helperFunctions");
 
 const insertTransaction = async (transaction, userId) => {
-    console.log(transaction);
-
     const id = generateId();
     const sql =
-        "insert into transaction (id, amount, categoryId, date, note, toAccountId, fromAccountId, imageUris, location, type, userId) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "insert into transaction (id, amount, categoryId, date, note, toAccountId, fromAccountId, imageUris, location, type, status, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const [result] = await sqlPool.query(sql, [
         id,
         transaction.amount,
@@ -15,9 +13,10 @@ const insertTransaction = async (transaction, userId) => {
         transaction.note,
         transaction.toAccountId,
         transaction.fromAccountId,
-        JSON.stringify(transaction.imageUris),
-        JSON.stringify(transaction.location),
+        transaction.imageUris,
+        transaction.location,
         transaction.type,
+        transaction.status,
         userId,
     ]);
     return {
@@ -31,6 +30,7 @@ const insertTransaction = async (transaction, userId) => {
         imageUris: transaction.imageUris,
         location: transaction.location,
         type: transaction.type,
+        status: transaction.status,
         userId,
     };
 };

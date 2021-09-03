@@ -53,8 +53,9 @@ const validateTransaction = (transaction) => {
         categoryId: Joi.string().required().label("Category"),
         toAccountId: Joi.string().label("Recepient account"),
         fromAccountId: Joi.string().label("Sender account"),
-        imageUris: Joi.array().label("Image array"),
-        location: Joi.object().label("Location"),
+        imageUris: Joi.string().label("Image array"),
+        location: Joi.string().label("Location"),
+        status: Joi.string().required().label("Status"),
     });
     return schema.validate(transaction);
 };
