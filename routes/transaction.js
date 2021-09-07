@@ -55,7 +55,6 @@ router.post("/incoming", auth, async (req, res) => {
         const customFieldValues = await insertCustomFieldIncomingValues(
             customFieldsValues
         );
-        console.log("All is fine");
         return res.send({ transaction, customFieldValues });
     } catch (error) {
         return res.status(405).send(error.message);
