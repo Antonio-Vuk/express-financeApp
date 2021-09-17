@@ -28,8 +28,17 @@ const insertTransaction = async (transaction, userId) => {
 };
 
 const insertTransactionImport = async (transaction, userId) => {
+    let imageUris = [];
+    let location = null;
+    if (transaction.imageUris != undefined) {
+        imageUris = transaction.imageUris;
+    }
+    if (transaction.location != undefined) {
+        location = transaction.location;
+    }
+
     const sql =
-        "insert into transaction (id, amount, categoryId, date, note, toAccountId, fromAccountId, type, userId) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "insert into transaction (id, amount, categoryId, date, note, toAccountId, fromAccountId, imageUris, location, type, status, userId) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const [result] = await sqlPool.query(sql, [
         transaction.id,
         transaction.amount,
@@ -38,8 +47,10 @@ const insertTransactionImport = async (transaction, userId) => {
         transaction.note,
         transaction.toAccountId,
         transaction.fromAccountId,
-        transaction.imageUris,
+        imageUris,
+        location,
         transaction.type,
+        transaction.status,
         userId,
     ]);
     return result;

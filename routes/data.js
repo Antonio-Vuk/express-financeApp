@@ -76,18 +76,19 @@ router.delete("/", auth, async (req, res) => {
 
 router.post("/", auth, async (req, res) => {
     try {
+        console.log(req.body);
         const {
             transactions,
             categories,
             wallets,
-            customFields,
+            customFilds,
             customFieldsListValues,
             customFieldsValues,
         } = req.body;
         const userId = req.user.id;
         await insertArray(categories, userId, insertCategoryImport);
         await insertArray(wallets, userId, insertWalletImport);
-        await insertArray(customFields, userId, insertCustomFieldImport);
+        await insertArray(customFilds, userId, insertCustomFieldImport);
         await insertArray(
             customFieldsListValues,
             userId,
@@ -101,6 +102,7 @@ router.post("/", auth, async (req, res) => {
         );
         return res.send(true);
     } catch (error) {
+        console.log(error.message);
         return res.status(405).send(error.message);
     }
 });
